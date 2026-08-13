@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: logistik-bot-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - logistik-network
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: logistik-bot-app
+    environment:
+      BOT_TOKEN: 8397811468:8972927490:AAHr3AUEly9EZGhLF08-EogQsD5NHdNBFL8
+      MONGODB_URI: mongodb://admin:password123@mongodb:27017/logistik_bot?authSource=admin
+      MONGODB_DB: logistik_bot
+      ADMIN_IDS: 7903688837
+      SUPPORT_CONTACT: "@jamshidbek_tolanboyev"
+      NEWS_CHANNEL: "@YukLine_uz"
+    depends_on:
+      - mongodb
+    networks:
+      - logistik-network
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
+
+networks:
+  logistik-network:
+    driver: bridge
